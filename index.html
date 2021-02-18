@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <title>View Tube</title>
+</head>
+<style>
+    .card-border {
+        border: 5px solid #F0F0F0;
+        border-radius: 10px;
+        
+    }
+
+    .card-image-background{
+        background-color:white;
+        overflow: hidden;
+    }
+
+    .card-image-background img{
+        transition: all 1.5s ease;
+    }
+
+    .card-image-background img:hover{
+        transform: scale(1.2);
+    }
+    
+
+    .card-text-background{
+        background-color: rgba(0, 0, 128, 0.144);
+    }
+    .card-text-background:hover{
+        background-color: #000000;
+        color: white;
+        transition: 400ms;
+        cursor: pointer;
+    }
+    body{
+        background-color: #000000;
+    }
+
+</style>
+
+<body>
+
+    <div class="container ">
+
+        <div class="row mt-5">
+            <div class="col-lg-4 col-md-3 col-sm-2"></div>
+            <div class="col-lg-4 col-md-6 col-sm-10">
+                <div class="d-flex justify-content-center">
+                    <img src="image/LogoMakr-4Fm15Z.png" alt="">
+                   
+                </div>
+                <div class="d-flex justify-content-center mt-2">
+                    <input type="text" class="form-control" placeholder="Search team or player name..."
+                        id="searchInput">
+                    <button type="submit" class="btn btn-outline-secondary" id="searchBtn">Search</button>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-3 col-sm-2"></div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-lg-12">
+                <div id='searchResult' class="row row-cols-1 row-cols-md-3 row-cols-lg-4 row-cols-sm-2 g-4 d-flex justify-content-center">
+                   
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-lg-12">
+                <table class="table table-striped table-responsive table-dark">
+                    <thead>
+                      <tr>
+                        <th scope="col">Pos</th>
+                        <th scope="col">Club</th>
+                        <th scope="col">Played</th>
+                        <th scope="col">Won</th>
+                        <th scope="col">Drawn</th>
+                        <th scope="col">Lost</th>
+                        <th scope="col">GF</th>
+                        <th scope="col">GA</th>
+                        <th scope="col">GD</th>
+                        <th scope="col">Points</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row">1</th>
+                        <td>Mark</td>
+                        <td>Otto</td>
+                        <td>@mdo</td>
+                        <td>Mark</td>
+                        <td>Otto</td>
+                        <td>@mdo</td>
+                        <td>Mark</td>
+                        <td>Otto</td>
+                        <td>Mark</td>
+                      </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-lg-2 col-md-1 col-sm-12"></div>
+            <div class="col-lg-8 col-md-10 col-sm-11">
+                <div id='searchResultDetails' class="detailsBackground">
+    
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-1 col-sm-12"></div>
+        </div>
+        
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
+    </script>
+    <script>
+        document.getElementById('searchBtn').addEventListener('click', () => {
+            const inputText = document.getElementById('searchInput').value;
+            const teamUrl = `https://www.thesportsdb.com/api/v1/json/1/searchteams.php?t=${inputText}`;
+            const playerUrl = `https://www.thesportsdb.com/api/v1/json/1/searchplayers.php?p=${inputText}`
+            Promise.all([
+                    fetch(teamUrl)
+                    .then(resTeam => resTeam.json()),
+                    fetch(playerUrl)
+                    .then(resPlayer => resPlayer.json())
+                ])
+                .then(data => displayResult(data[0].teams, data[1].player))
+        })
+
+        const displayResult = (teams, player) => {
+            const searchResult = document.getElementById('searchResult');
+            if (teams) {
+                teams.forEach(teamsElement => {
+                    if (teamsElement.strSport == 'Soccer') {
+                        console.log(teamsElement);
+                        const teamsDiv = document.createElement('div');
+                        if(teamsElement.strTeamFanart3){
+                            teamsDiv.innerHTML = `
+                            <div class="card-deck">
+                                <div class="card card-border">   
+                                    <div class="card-image-background">
+                                        <img class="w-100 card-img-top img-fluid" src="${teamsElement.strTeamFanart3}" alt="Card image cap"> 
+                                    </div>                 
+                                    <div class="card-body card-text-background" onclick="teamDetails('${teamsElement.idTeam}')">
+                                        <h5 class="card-title">${teamsElement.strTeam}</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        `
+                        }else if(teamsElement.strTeamFanart3 == null){
+                            teamsDiv.innerHTML = `
+                            <div class="card-deck">
+                                <div class="card card-border">
+                                    <div class="card-header">
+                                        <img class=" card-img-top img-fluid" src="image/no-image-available-w.jpeg" alt="Card image cap">
+                                    </div>
+                                    <div class="card-body card-text-background" onclick="teamDetails('${teamsElement.idTeam}')">
+                                        <h5 class="card-title">${teamsElement.strTeam}</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        `
+                        }
+                       
+                        searchResult.appendChild(teamsDiv);
+                    }
+                });
+                
+            } 
+            else if (player) {
+                player.forEach(playerElement => {
+
+                    if (playerElement.strSport == 'Soccer') {
+                        console.log(playerElement);
+                        const playerDiv = document.createElement('div');
+                        if(playerElement.strThumb){
+                            playerDiv.innerHTML = `
+                            <div class="card-deck">
+                                <div class="card card-border">
+                                    <div class="card-image-background">
+                                        <img class="card-img-top img-fluid" src="${playerElement.strThumb}" alt="Card image cap">
+                                    </div>
+                                    <div class="card-body card-text-background" onclick="playerDetails('${playerElement.idPlayer}')">
+                                        <h5 class="card-title">${playerElement.strPlayer}</h5>
+                                    </div>
+                                </div>
+                            </div>
+
+                        `
+                    } else if(playerElement.strThumb == null){
+                         playerDiv.innerHTML = `
+                            <div class="card-deck">
+                                <div class="card card-border">
+                                    <div>
+                                        <img class="card-img-top img-fluid" src="image/no-image-available.jpeg" alt="Card image cap">
+                                    </div>
+                                    <div class="card-body card-text-background" onclick="playerDetails('${playerElement.idPlayer}')">
+                                        <h5 class="card-title">${playerElement.strPlayer}</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        `
+                    }
+                        
+                        searchResult.appendChild(playerDiv);
+                    }
+                });
+            }
+        }
+
+        const teamDetails = (teamId) =>{
+            const teamUrl = `https://www.thesportsdb.com/api/v1/json/1/lookupteam.php?id=${teamId}`;
+                fetch(teamUrl)
+                .then(resTeam => resTeam.json())
+                .then(teamData => displayTeamDetails(teamData.teams[0]))
+        }
+
+        const playerDetails = (playerId)=>{
+            const playerUrl = `https://www.thesportsdb.com/api/v1/json/1/lookupplayer.php?id=${playerId}`
+                fetch(playerUrl)
+                .then(resPlayer => resPlayer.json())
+                .then(playerData => displayPlayerResult(playerData.players[0]))
+        }
+        
+
+        const displayTeamDetails = (team) =>{
+            console.log(team); 
+            const searchResultDetails = document.getElementById('searchResultDetails');   
+            const searchResult = document.getElementById('searchResult');
+            searchResult.innerHTML='';
+            searchResultDetails.style.backgroundImage = `${team.strStadium}`;
+            searchResultDetails.innerHTML =`
+            <div class='d-flex justify-content-center'>
+                <img class="w-50 img-fluid rounded" src="${team.strTeamBadge}" alt="">
+            </div>
+            <div class='d-flex justify-content-center'>
+                <div>
+                    <p class="text-white mt-2"><b>Team Name : </b>${team.strTeam}</p>
+                    <p class="text-white"><b>Country : </b>${team.strCountry}</p>
+                    <p class="text-white"><b>League : </b>${team.strLeague}</p>
+                    <p class="text-white"><b>Founded Year : </b>${team.intFormedYear}</p>
+                    <p class="text-white"><b>Ground : </b>${team.strStadium}</p>
+                    <p class="text-white"><b>Ground Location: </b>${team.strStadiumLocation}</p>
+                    <p class="text-white"><b>Ground Capacity: </b>${team.intStadiumCapacity}</p>
+                    <p class="text-white"><b>Description : </b>${team.strDescriptionEN}</p>
+                    <p class="text-white"><b>Team Jersey : </b></p>
+                    <img class="img-fluid rounded" src="${team.strTeamJersey}" alt="">
+                    <p class="text-white"><b>Team Banner : </b></p>
+                    <img class="img-fluid rounded" src="${team.strTeamBanner}" alt="">
+                    <p class="text-white"><b>Team Logo : </b></p>
+                    <img class="img-fluid rounded" src="${team.strTeamLogo}" alt="">
+                    <p class="text-white"><b>Gallery : </b></p>
+                </div>
+            </div>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 row-cols-sm-2 g-2 d-flex justify-content-center">
+                <a href="${team.strTeamFanart1}" target="_black"><img class="img-fluid rounded" src="${team.strTeamFanart1}" alt=""></a>
+                <a href="${team.strTeamFanart2}" target="_black"><img class="img-fluid rounded" src="${team.strTeamFanart2}" alt=""></a>
+                <a href="${team.strTeamFanart3}" target="_black"><img class="img-fluid rounded" src="${team.strTeamFanart3}" alt=""></a>   
+                <a href="${team.strTeamFanart4}" target="_black"><img class="img-fluid rounded" src="${team.strTeamFanart4}" alt=""></a>
+            </div>
+            `       
+        }
+
+        const displayPlayerResult = (player) =>{
+            console.log(player);           
+        }
+
+    </script>
+</body>
+
+</html>
