@@ -103,16 +103,56 @@ const playerDetails = (playerId) => {
     const playerUrl = `https://www.thesportsdb.com/api/v1/json/1/lookupplayer.php?id=${playerId}`
     fetch(playerUrl)
         .then(resPlayer => resPlayer.json())
-        .then(playerData => displayPlayerResult(playerData.players[0]))
+        .then(playerData => displayPlayerDetails(playerData.players[0]))
+}
+
+const displayPlayerDetails=(player)=>{
+    const searchResultDetails = document.getElementById('searchResultDetails');
+    const searchResult = document.getElementById('searchResult');
+    searchResult.innerHTML='';
+    searchResultDetails.innerHTML = `
+    <div class='d-flex justify-content-center'>
+        <img class="w-50 img-fluid rounded" src="${player.strThumb}" alt="">
+    </div>
+    <div class='d-flex justify-content-center'>
+        <div>
+            <p class="text-white mt-2"><b>Player Name : </b>${player.strPlayer}</p>
+            <p class="text-white"><b>Nationality : </b>${player.strNationality}</p>
+            <p class="text-white"><b>Birth Day : </b>${player.dateBorn}</p>
+            <p class="text-white"><b>Birth Day Location : </b>${player.strBirthLocation}</p>
+            <p class="text-white"><b>Team : </b>${player.strTeam}</p>
+            <p class="text-white"><b>Kit Number : </b>${player.strNumber}</p>
+            <p class="text-white"><b>Kit : </b>${player.strKit}</p>
+            <p class="text-white"><b>Position : </b>${player.strPosition}</p>
+            <p class="text-white"><b>Foot: </b>${player.strSide}</p>
+            <p class="text-white"><b>Height: </b>${player.strHeight}</p>
+            <p class="text-white"><b>Weight : </b>${player.strWeight}</p>
+            <p class="text-white"><b>Date Signed : </b>${player.dateSigned}</p>
+            <p class="text-white"><b>Signing : </b>${player.strSigning}</p>
+            <p class="text-white"><b>Wage : </b>${player.strWage}</p>
+            <p class="text-white"><b>Description : </b>${player.strDescriptionEN}</p>
+            <p class="text-white"><b>Gallery : </b></p>
+        </div>
+    </div>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 row-cols-sm-2 g-2 d-flex justify-content-center">
+        <a href="${player.strThumb}" target="_black"><img class="img-fluid rounded" src="${player.strThumb}" alt=""></a>
+        <a href="${player.strCutout}" target="_black"><img class="img-fluid rounded" src="${player.strCutout}" alt=""></a>
+        <a href="${player.strRender}" target="_black"><img class="img-fluid rounded" src="${player.strRender}" alt=""></a>   
+        <a href="${player.strFanart1}" target="_black"><img class="img-fluid rounded" src="${player.strFanart1}" alt=""></a>
+        <a href="${player.strFanart2}" target="_black"><img class="img-fluid rounded" src="${player.strFanart2}" alt=""></a>
+        <a href="${player.strFanart3}" target="_black"><img class="img-fluid rounded" src="${player.strFanart3}" alt=""></a>
+        <a href="${player.strFanart4}" target="_black"><img class="img-fluid rounded" src="${player.strFanart4}" alt=""></a>
+    </div>
+    `
+
 }
 
 
 const displayTeamDetails = (team) => {
-    console.log(team);
     const searchResultDetails = document.getElementById('searchResultDetails');
     const searchResult = document.getElementById('searchResult');
     searchResult.innerHTML = '';
-    searchResultDetails.style.backgroundImage = `${team.strStadium}`;
+    //searchResultDetails.style.backgroundImage = `${team.strStadium}`;
     searchResultDetails.innerHTML = `
     <div class='d-flex justify-content-center'>
         <img class="w-50 img-fluid rounded" src="${team.strTeamBadge}" alt="">
